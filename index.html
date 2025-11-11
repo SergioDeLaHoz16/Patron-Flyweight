@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrón Flyweight - Infografía Interactiva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-80px) scale(0.9); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(80px) scale(0.9); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.7) rotate(-5deg); }
+            to { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .animate-slide-in-left {
+            animation: slideInLeft 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .animate-slide-in-right {
+            animation: slideInRight 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .animate-scale-in {
+            animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        .animate-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 3s infinite;
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-800 { animation-delay: 0.8s; }
+        
+        /* Efectos hover mejorados */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Números grandes para las secciones */
+        .section-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1);
+            line-height: 1;
+        }
+        
+        /* Mejora del balancín */
+        .seesaw-bar {
+            transition: transform 0.5s ease;
+        }
+        
+        /* Efecto de ondas en los objetos */
+        .wave-pattern {
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.1) 2px,
+                rgba(255, 255, 255, 0.1) 4px
+            );
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white min-h-screen">
+    
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 py-12">
+        <div class="text-center mb-12 animate-fade-in-up">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">Patrón Flyweight</h1>
+            <div class="bg-blue-950 rounded-lg p-6 max-w-4xl mx-auto animate-scale-in delay-200">
+                <p class="text-xl md:text-2xl leading-relaxed">
+                    El patrón Flyweight optimiza la memoria al compartir estados. 
+                    Reduce el consumo de recursos en objetos similares.
+                </p>
+            </div>
+        </div>
+
+        <!-- Seesaw Illustration -->
+        <div class="flex justify-center items-center my-16 animate-fade-in-up delay-300">
+            <div class="relative w-full max-w-4xl">
+                <div class="text-center mb-6">
+                    <span class="text-3xl font-bold bg-blue-950 px-8 py-3 rounded-lg inline-block shadow-lg animate-pulse-slow">RAM</span>
+                </div>
+                <div class="flex items-end justify-center h-72 relative">
+                    <!-- Left side - Heavy -->
+                    <div class="flex-1 flex flex-col items-center justify-end">
+                        <div class="flex flex-wrap justify-center gap-2 mb-6">
+                            <div class="w-14 h-14 bg-blue-600 border-2 border-blue-400 rounded wave-pattern animate-float delay-100"></div>
+                            <div class="w-14 h-14 bg-blue-600 border-2 border-blue-400 rounded wave-pattern animate-float delay-200"></div>
+                            <div class="w-14 h-14 bg-blue-600 border-2 border-blue-400 rounded wave-pattern animate-float delay-300"></div>
+                            <div class="w-14 h-14 bg-blue-600 border-2 border-blue-400 rounded wave-pattern animate-float delay-400"></div>
+                            <div class="w-14 h-14 bg-blue-600 border-2 border-blue-400 rounded wave-pattern animate-float delay-500"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl mb-2 animate-bounce">😰</div>
+                            <p class="text-sm font-semibold">Alto consumo</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Seesaw bar -->
+                    <div class="absolute top-1/2 left-0 right-0 h-2 bg-white shadow-lg seesaw-bar transform -translate-y-1/2" style="transform: rotate(-8deg) translateY(-50%);"></div>
+                    
+                    <!-- Right side - Light -->
+                    <div class="flex-1 flex flex-col items-center justify-end">
+                        <div class="flex flex-wrap justify-center gap-2 mb-6">
+                            <div class="w-20 h-20 bg-green-500 border-2 border-green-300 rounded wave-pattern animate-float delay-100"></div>
+                            <div class="w-20 h-20 bg-green-500 border-2 border-green-300 rounded wave-pattern animate-float delay-200"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl mb-2 animate-bounce delay-300">😊</div>
+                            <p class="text-sm font-semibold">Optimizado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estados Section -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-8 animate-fade-in-up">Se dividen en</h2>
+        <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <!-- Estado Intrínseco -->
+            <div class="bg-blue-950 rounded-xl p-8 card-hover animate-slide-in-left shadow-xl border border-blue-800/50">
+                <div class="flex items-center mb-6">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mr-6 shadow-lg animate-pulse-slow">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-200">Estado intrínseco</h3>
+                </div>
+                <p class="text-lg leading-relaxed text-blue-100">
+                    Es parte del estado que puede ser compartida entre múltiples objetos y que no cambia según el contexto.
+                </p>
+            </div>
+
+            <!-- Estado Extrínseco -->
+            <div class="bg-blue-950 rounded-xl p-8 card-hover animate-slide-in-right shadow-xl border border-blue-800/50">
+                <div class="flex items-center mb-6">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mr-6 shadow-lg animate-pulse-slow delay-200">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-200">Estado extrínseco</h3>
+                </div>
+                <p class="text-lg leading-relaxed text-blue-100">
+                    Es parte del estado que no puede ser compartida, pues depende del contexto o del cliente, y se pasa al objeto compartido al momento de uso.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Objetivos Section -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-12 animate-fade-in-up">Objetivos</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <!-- Objetivo 1 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-100 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Optimizar el uso de memoria</h3>
+                <p class="text-center text-blue-100">Al evitar crear un gran número de objetos con datos redundantes, se reduce el consumo de memoria.</p>
+            </div>
+
+            <!-- Objetivo 2 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-200 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-200">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Mejorar el rendimiento</h3>
+                <p class="text-center text-blue-100">Menos creación de objetos, menos carga sobre el sistema de memoria y recolección de basura.</p>
+            </div>
+
+            <!-- Objetivo 3 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-300 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Favorecer la reutilización</h3>
+                <p class="text-center text-blue-100">Compartir partes comunes entre instancias permite mayor eficiencia y menor duplicación de estado.</p>
+            </div>
+
+            <!-- Objetivo 4 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-400 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Separar claramente el estado</h3>
+                <p class="text-center text-blue-100">Para facilitar el mantenimiento y la claridad en el diseño.</p>
+            </div>
+
+            <!-- Objetivo 5 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-500 md:col-span-2 lg:col-span-1 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Escalabilidad Mejorada</h3>
+                <p class="text-center text-blue-100">Soporta más objetos sin aumentar el uso de memoria. ¡Ideal para grandes proyectos!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Soluciones y Beneficios Section -->
+    <section class="container mx-auto px-4 py-12">
+        <div class="bg-blue-950 rounded-lg p-8 max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 animate-fade-in-up">Soluciones con Flyweight</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <!-- Solución 1 -->
+                <div class="animate-slide-in-left delay-100">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Solución 1</h3>
+                    </div>
+                    <p>Resuelve el problema de consumo excesivo de memoria cuando una aplicación necesita generar una enorme cantidad de objetos similares que apenas caben en la RAM disponible.</p>
+                </div>
+
+                <!-- Solución 2 -->
+                <div class="animate-slide-in-right delay-200">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Solución 2</h3>
+                    </div>
+                    <p>Elimina la creación redundante de objetos con características comunes, lo cual agota la memoria disponible en el dispositivo objetivo.</p>
+                </div>
+
+                <!-- Solución 3 -->
+                <div class="animate-slide-in-left delay-300 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Solución 3</h3>
+                    </div>
+                    <p>Aborda situaciones donde múltiples objetos contienen estados duplicados que pueden ser extraídos y compartidos entre varios objetos.</p>
+                </div>
+            </div>
+
+            <h2 class="text-3xl font-bold text-center mb-12 animate-fade-in-up">Beneficios</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Beneficio 1 -->
+                <div class="bg-blue-900 rounded-lg p-6 hover:bg-blue-800 transition-colors duration-300 animate-fade-in-up delay-100">
+                    <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3 text-center">Reducción de Memoria</h3>
+                    <p class="text-center text-sm">Reduce significativamente el consumo de memoria al compartir estados comunes entre múltiples objetos.</p>
+                </div>
+
+                <!-- Beneficio 2 -->
+                <div class="bg-blue-900 rounded-lg p-6 hover:bg-blue-800 transition-colors duration-300 animate-fade-in-up delay-200">
+                    <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3 text-center">Menos Sobrecarga</h3>
+                    <p class="text-center text-sm">Menos objetos significa menos sobrecarga en términos de asignación de memoria y recolección de basura.</p>
+                </div>
+
+                <!-- Beneficio 3 -->
+                <div class="bg-blue-900 rounded-lg p-6 hover:bg-blue-800 transition-colors duration-300 animate-fade-in-up delay-300">
+                    <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3 text-center">Sistemas Compartidos</h3>
+                    <p class="text-center text-sm">Particularmente beneficioso en sistemas donde están presentes muchos objetos con características compartidas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Desafíos Section -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-12 animate-fade-in-up">Desafíos del Flyweight</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <!-- Desafío 1 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-100 shadow-lg border border-blue-800/50">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">Complejidad adicional</h3>
+                <p class="text-sm text-blue-100">Introduce complejidad al código, especialmente al implementar la Factory de Flyweight y gestionar estados compartidos y no compartidos.</p>
+            </div>
+
+            <!-- Desafío 2 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-200 shadow-lg border border-blue-800/50">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow delay-200">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">Sobrecarga de código</h3>
+                <p class="text-sm text-blue-100">Requiere código adicional en la Factory para gestionar y mantener el pool de flyweights compartidos.</p>
+            </div>
+
+            <!-- Desafío 3 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-300 shadow-lg border border-blue-800/50">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow delay-300">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">Preocupaciones de seguridad de hilos</h3>
+                <p class="text-sm text-blue-100">Puede introducir problemas de concurrencia si múltiples hilos acceden y modifican flyweights compartidos simultáneamente.</p>
+            </div>
+
+            <!-- Desafío 4 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-400 shadow-lg border border-blue-800/50">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow delay-400">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">Impacto potencial en rendimiento</h3>
+                <p class="text-sm text-blue-100">El balance entre eficiencia de memoria y sobrecarga computacional adicional debe evaluarse cuidadosamente.</p>
+            </div>
+
+            <!-- Desafío 5 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-500 shadow-lg border border-blue-800/50">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow delay-500">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">No es tan útil cuando la redundancia no es tan grande</h3>
+                <p class="text-sm text-blue-100">En casos donde el número de objetos o la redundancia no sea tan grande, el beneficio puede no compensar el coste.</p>
+            </div>
+
+            <!-- Desafío 6 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-600 shadow-lg border border-blue-800/50">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow delay-600">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">Problemas de concurrencia</h3>
+                <p class="text-sm text-blue-100">Si el estado compartido (intrínseco) es mutable, pueden surgir problemas de incoherencia al compartirlo entre distintas instancias.</p>
+            </div>
+
+            <!-- Desafío 7 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-700 shadow-lg border border-blue-800/50 md:col-span-2 lg:col-span-1">
+                <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse-slow delay-700">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-blue-200">No ideal para todos los tipos</h3>
+                <p class="text-sm text-blue-100">Más efectivo cuando muchos objetos comparten una cantidad significativa de estado común.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diagrama Section con imagen y explicaciones numeradas -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-12 animate-fade-in-up">Diagrama</h2>
+        <div class="bg-blue-950 rounded-xl p-8 max-w-7xl mx-auto animate-scale-in shadow-2xl">
+            <!-- Imagen del diagrama central -->
+            <div class="relative mb-12 flex justify-center">
+                <div class="relative inline-block">
+                    <img src="diagrama-flyweight.png" alt="Diagrama Flyweight Pattern" class="max-w-full h-auto rounded-lg shadow-xl animate-fade-in-up">
+                    <div class="absolute inset-0 bg-gradient-to-t from-blue-950/20 to-transparent rounded-lg pointer-events-none"></div>
+                </div>
+            </div>
+
+            <!-- Secciones numeradas alrededor del diagrama -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+                <!-- Sección 1 -->
+                <div class="bg-blue-900/50 rounded-lg p-6 card-hover animate-fade-in-up delay-100 border-l-4 border-blue-400">
+                    <div class="flex items-start">
+                        <span class="section-number mr-4">1</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-3 text-blue-300">El patrón Flyweight es simplemente una optimización.</h3>
+                            <p class="text-sm leading-relaxed">Antes de aplicarlo, asegúrate de que tu programa tenga un problema de consumo de RAM provocado por tener una gran cantidad de objetos similares en la memoria al mismo tiempo. Asegúrate de que este problema no se pueda solucionar de otra forma sensata.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 2 -->
+                <div class="bg-blue-900/50 rounded-lg p-6 card-hover animate-fade-in-up delay-200 border-l-4 border-blue-400">
+                    <div class="flex items-start">
+                        <span class="section-number mr-4">2</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-3 text-blue-300">La clase Flyweight contiene la parte del estado del objeto original que pueden compartir varios objetos.</h3>
+                            <p class="text-sm leading-relaxed">El mismo objeto flyweight puede utilizarse en muchos contextos diferentes. El estado almacenado dentro de un objeto flyweight se denomina intrínseco, mientras que al que se pasa a sus métodos se le llama extrínseco.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 3 -->
+                <div class="bg-blue-900/50 rounded-lg p-6 card-hover animate-fade-in-up delay-300 border-l-4 border-blue-400">
+                    <div class="flex items-start">
+                        <span class="section-number mr-4">3</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-3 text-blue-300">La clase Contexto contiene el estado extrínseco, único en todos los objetos originales.</h3>
+                            <p class="text-sm leading-relaxed">Cuando un contexto se empareja con uno de los objetos flyweight, representa el estado completo del objeto original.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 4 -->
+                <div class="bg-blue-900/50 rounded-lg p-6 card-hover animate-fade-in-up delay-400 border-l-4 border-blue-400">
+                    <div class="flex items-start">
+                        <span class="section-number mr-4">4</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-3 text-blue-300">Normalmente, el comportamiento del objeto original permanece en la clase flyweight.</h3>
+                            <p class="text-sm leading-relaxed">En este caso, quien invoque un método del objeto flyweight debe también pasar las partes adecuadas del estado extrínseco dentro de los parámetros del método. Por otra parte, el comportamiento se puede mover a la clase de contexto, que utilizará el objeto flyweight vinculado como mero objeto de datos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 5 -->
+                <div class="bg-blue-900/50 rounded-lg p-6 card-hover animate-fade-in-up delay-500 border-l-4 border-blue-400">
+                    <div class="flex items-start">
+                        <span class="section-number mr-4">5</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-3 text-blue-300">El Cliente calcula o almacena el estado extrínseco de los objetos flyweight.</h3>
+                            <p class="text-sm leading-relaxed">Desde la perspectiva del cliente, un flyweight es un objeto plantilla que puede configurarse durante el tiempo de ejecución pasando información contextual dentro de los parámetros de sus métodos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 6 -->
+                <div class="bg-blue-900/50 rounded-lg p-6 card-hover animate-fade-in-up delay-600 border-l-4 border-blue-400 md:col-span-2 lg:col-span-1">
+                    <div class="flex items-start">
+                        <span class="section-number mr-4">6</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-3 text-blue-300">La Fábrica flyweight gestiona un grupo de objetos flyweight existentes.</h3>
+                            <p class="text-sm leading-relaxed">Con la fábrica, los clientes no crean objetos flyweight directamente. En lugar de eso, invocan a la fábrica, pasándole partes del estado intrínseco del objeto flyweight deseado. La fábrica revisa objetos flyweight creados previamente y devuelve uno existente que coincida con los criterios de búsqueda, o bien crea uno nuevo si no encuentra nada.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Casos de Uso Section -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-12 animate-fade-in-up">Casos de uso comunes</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <!-- Caso 1 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-100 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Sistemas gráficos / videojuegos</h3>
+                <p class="text-center text-sm text-blue-100">Muchas instancias de objetos similares (árboles, hojas, partículas), donde se comparte la geometría o textura, y sólo varían la posición, escala o rotación.</p>
+            </div>
+
+            <!-- Caso 2 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-200 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-200">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Editores de texto</h3>
+                <p class="text-center text-sm text-blue-100">Donde muchas instancias comparten la misma información tipográfica. Además, el código del carácter es intrínseco y la posición en el documento es extrínseca.</p>
+            </div>
+
+            <!-- Caso 3 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-300 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Sistemas de caché</h3>
+                <p class="text-center text-sm text-blue-100">Donde objetos costosos de crear pueden compartirse cuando su estado interno es idéntico o muy similar.</p>
+            </div>
+
+            <!-- Caso 4 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-400 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Navegadores web</h3>
+                <p class="text-center text-sm text-blue-100">Prevención de cargar la misma imagen dos veces usando caché interna y objetos flyweight para imágenes ya cargadas.</p>
+            </div>
+
+            <!-- Caso 5 -->
+            <div class="bg-blue-950 rounded-xl p-6 card-hover animate-fade-in-up delay-500 md:col-span-2 lg:col-span-1 shadow-lg border border-blue-800/50">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse-slow delay-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center text-blue-200">Sistemas de visualización o UI</h3>
+                <p class="text-center text-sm text-blue-100">Donde hay muchos iconos o elementos repetitivos con apariencia común.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusión Section -->
+    <section class="container mx-auto px-4 py-12">
+        <div class="bg-blue-950 rounded-lg p-8 max-w-4xl mx-auto animate-fade-in-up">
+            <h2 class="text-3xl font-bold text-center mb-8">Conclusión</h2>
+            <p class="text-lg leading-relaxed mb-8">
+                El patrón Flyweight es una solución eficiente y elegante para sistemas que necesitan gestionar una gran cantidad de objetos similares, especialmente cuando la optimización de memoria y rendimiento son cruciales. Sus ventajas incluyen eficiencia de memoria, rendimiento mejorado, conservación de recursos y soporte para sistemas a gran escala. La decisión de usar el patrón Flyweight debe basarse en un análisis cuidadoso de los requisitos específicos y restricciones del sistema. Cuando se aplica juiciosamente, contribuye a diseños más eficientes y escalables, convirtiéndolo en un activo valioso en el conjunto de herramientas de diseñadores y arquitectos de software.
+            </p>
+            
+            <!-- Seesaw illustration -->
+            <div class="flex justify-center items-center my-8">
+                <div class="relative w-full max-w-md">
+                    <div class="text-center mb-4">
+                        <span class="text-xl font-bold bg-blue-800 px-4 py-1 rounded">RAM</span>
+                    </div>
+                    <div class="flex items-end justify-center h-48">
+                        <div class="flex-1 flex flex-col items-center justify-end">
+                            <div class="flex flex-wrap justify-center gap-1 mb-2">
+                                <div class="w-8 h-8 bg-blue-600 rounded"></div>
+                                <div class="w-8 h-8 bg-blue-600 rounded"></div>
+                                <div class="w-8 h-8 bg-blue-600 rounded"></div>
+                                <div class="w-8 h-8 bg-blue-600 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="absolute top-1/2 left-0 right-0 h-1 bg-white" style="transform: rotate(-3deg);"></div>
+                        <div class="flex-1 flex flex-col items-center justify-end">
+                            <div class="flex flex-wrap justify-center gap-1 mb-2">
+                                <div class="w-10 h-10 bg-green-500 rounded"></div>
+                                <div class="w-10 h-10 bg-green-500 rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="container mx-auto px-4 py-12 text-center">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-12 animate-scale-in">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Vamos con el ejercicio</h2>
+            <p class="text-xl mb-8">¡Es hora de poner en práctica el patrón Flyweight!</p>
+            <button class="bg-white text-blue-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-100 transition-colors duration-300 transform hover:scale-105">
+                Comenzar Ejercicio
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="container mx-auto px-4 py-8 text-center text-blue-300">
+        <p>Patrón Flyweight - Infografía Interactiva</p>
+    </footer>
+
+    <script>
+        // Intersection Observer para animaciones al hacer scroll
+        // Solo anima elementos que están fuera del viewport inicial
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Agregar clase para activar la animación CSS
+                    entry.target.classList.add('animate-visible');
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) translateX(0) scale(1)';
+                    // No observar de nuevo para evitar re-animaciones
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Función para inicializar animaciones
+        function initAnimations() {
+            // Esperar a que la página se renderice completamente
+            requestAnimationFrame(() => {
+                const animatedElements = document.querySelectorAll('.animate-fade-in-up, .animate-slide-in-left, .animate-slide-in-right, .animate-scale-in');
+                
+                animatedElements.forEach(el => {
+                    // Verificar si el elemento ya está visible en el viewport inicial
+                    const rect = el.getBoundingClientRect();
+                    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+                    const isInitiallyVisible = rect.top < windowHeight * 1.5 && rect.bottom > -200;
+                    
+                    if (!isInitiallyVisible) {
+                        // Solo ocultar elementos que NO están visibles inicialmente
+                        if (el.classList.contains('animate-fade-in-up') || el.classList.contains('animate-scale-in')) {
+                            el.style.opacity = '0';
+                            el.style.transform = 'translateY(50px) scale(0.95)';
+                        } else if (el.classList.contains('animate-slide-in-left')) {
+                            el.style.opacity = '0';
+                            el.style.transform = 'translateX(-80px) scale(0.9)';
+                        } else if (el.classList.contains('animate-slide-in-right')) {
+                            el.style.opacity = '0';
+                            el.style.transform = 'translateX(80px) scale(0.9)';
+                        }
+                        
+                        // Agregar transición suave
+                        el.style.transition = 'opacity 1s cubic-bezier(0.34, 1.56, 0.64, 1), transform 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        
+                        // Observar el elemento para animarlo cuando entre en viewport
+                        observer.observe(el);
+                    }
+                    // Si está visible inicialmente, dejarlo como está (visible)
+                });
+            });
+        }
+
+        // Inicializar cuando el DOM esté completamente listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                // Esperar un frame adicional para asegurar renderizado
+                setTimeout(initAnimations, 50);
+            });
+        } else {
+            // DOM ya está listo, pero esperar un frame
+            setTimeout(initAnimations, 50);
+        }
+
+        // Animación del balancín al hacer hover
+        document.addEventListener('DOMContentLoaded', () => {
+            const seesawContainer = document.querySelector('.seesaw-bar');
+            if (seesawContainer) {
+                const seesawSection = seesawContainer.closest('section');
+                if (seesawSection) {
+                    seesawSection.addEventListener('mouseenter', () => {
+                        seesawContainer.style.transition = 'transform 0.3s ease';
+                        seesawContainer.style.transform = 'rotate(-10deg) translateY(-50%)';
+                    });
+                    seesawSection.addEventListener('mouseleave', () => {
+                        seesawContainer.style.transform = 'rotate(-8deg) translateY(-50%)';
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
